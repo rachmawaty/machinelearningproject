@@ -89,7 +89,7 @@ public class RandomForest extends AbstractClassifier implements Serializable{
             Evaluation eval = new Evaluation(instances);
 
             System.out.println("\nCross-Validation 10 Folds Evaluation");
-            Random rand = new Random(100);        
+            Random rand = new Random();        
             eval.crossValidateModel(rf, instances, 10, rand); 
             System.out.println(eval.toSummaryString());
             System.out.println(eval.toMatrixString());

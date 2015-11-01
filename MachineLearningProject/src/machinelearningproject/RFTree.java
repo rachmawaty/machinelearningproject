@@ -8,6 +8,7 @@ package machinelearningproject;
 import static java.lang.Math.round;
 import static java.lang.Math.sqrt;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -33,28 +34,30 @@ public class RFTree extends Tree{
         
         return randomInstances;
     }
+    
+    //shuffle number code from http://java.about.com/od/javautil/a/uniquerandomnum.htm
+    public ArrayList<Integer> randomFraction(int maxNumber)
+    {
+        ArrayList<Integer> numbers = new ArrayList<Integer>();
+        for (int i = 0; i < maxNumber; i++){
+            numbers.add(i);
+        }
+        Collections.shuffle(numbers);
+        return numbers;
+    }
         
     @Override
     public Tree buildTree(Instances instances) throws Exception
     {
         Tree tree = new Tree();
         ArrayList<String> availableAttributes = new ArrayList();
+        int largestInfoGainAttrIdx = -1;
+        double largestInfoGainAttrValue = 0.0;
         
         //choose random fraction
         int numAttr = instances.numAttributes();
         int k = (int)round(sqrt(numAttr));
-        ArrayList<Integer> idxList = new ArrayList();
-        for (int i = 0; i < k; i++){
-            int rand = new Random().nextInt(numAttr);
-            if (idxList.isEmpty() || !idxList.contains(rand)){
-                idxList.add(rand);
-            } else {
-                
-            }
-        }
-        
-        int largestInfoGainAttrIdx = -1;
-        double largestInfoGainAttrValue = 0.0;
+        ArrayList<Integer> randomIdx = randomFraction(numAttr);
         
         for(int idx = 0; idx < k; idx++){
             if (idx != instances.classIndex()){
