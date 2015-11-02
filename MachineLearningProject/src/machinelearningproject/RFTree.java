@@ -62,10 +62,8 @@ public class RFTree extends Tree{
         for(int idx = 0; idx < k; idx++){
             if (idx != instances.classIndex()){
                 availableAttributes.add(instances.attribute(idx).name());
-                System.out.print(instances.attribute(idx).name()+" ; ");
             }
         }
-        System.out.println("");
         
         if(instances.numInstances() == 0){
            return null;

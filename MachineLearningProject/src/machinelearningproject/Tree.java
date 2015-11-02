@@ -17,6 +17,7 @@ import weka.core.Instances;
  * @author Raches
  */
 public class Tree implements Serializable{
+    // reference source code: http://afewguyscoding.com/2010/03/id3-decision-trees-java/
     class Node implements Serializable{
         public String value;
         public Tree subTree;
@@ -112,7 +113,7 @@ public class Tree implements Serializable{
         Iterator<String> keySetIterator = classMap.keySet().iterator(); 
         while(keySetIterator.hasNext()){ 
             String key = keySetIterator.next();
-//            System.out.println("key: " + key + " value: " + classMap.get(key));
+            // reference source code http://onoffswitch.net/building-decision-tree/
             double prob = (double)classMap.get(key) / (double)numInstances;
             entropy -= prob * (Math.log(prob)/Math.log(2));
         }

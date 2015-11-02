@@ -2,13 +2,15 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
- */
+ */ 
 
 package machinelearningproject;
-import static java.lang.Math.round;
-import static java.lang.Math.sqrt;
 import java.util.ArrayList;
-import weka.core.Instance;
+import java.util.Arrays;
+import java.util.Random;
+import weka.classifiers.Evaluation;
+import weka.classifiers.functions.SMO;
+import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 
@@ -27,30 +29,54 @@ public class MachineLearningProject {
 //        DataSource source = new DataSource("D:\\weather-nominal.arff");
         Instances instances = source.getDataSet();
         int numAttr = instances.numAttributes();
-        int k = (int)round(sqrt(numAttr));
-        System.out.println("K Fraction "+k);
-        instances.setClassIndex(instances.numAttributes() -1);
+        instances.setClassIndex(instances.numAttributes()-1);
+
+        Random rand_ = new Random();  
+        instances.randomize(rand_);
         
-//        System.out.println(instances);
-//        System.out.println(instances.attribute(instances.numAttributes()-1).name());
-//        System.out.println("num of instances " + instances.size());
+        Random randeval = new Random(1);
+        Evaluation eval = new Evaluation(instances);
         
-        DecisionTree tr = new DecisionTree();
-//        System.out.println(tr.calculateClassEntropy(instances));
-//        tr.calculateEntropy(instances, instances.numAttributes()-1);
-//        for (int i=0;i<instances.numAttributes()-1;i++){
-//            System.out.println(instances.attribute(i).name() +"-"+ tr.calculateInformationGain(instances, i, instances.numAttributes()-1));
+        // ID3 Evaluation
+//        System.out.println("\n=== ID3 EVALUATION ===");  
+//        DecisionTree id3 = new DecisionTree();
+//        
+//        eval.crossValidateModel(id3, instances, 10, randeval); 
+//        System.out.println(eval.toSummaryString());
+//        System.out.println(eval.toClassDetailsString());
+//        System.out.println(eval.toMatrixString());
+//        
+//        // Random Forest Evaluation
+//        System.out.println("\n=== RANDOM FOREST EVALUATION ===");
+//        
+//        RandomForest rf = new RandomForest(5);
+//        
+//        eval.crossValidateModel(rf, instances, 10, randeval); 
+//        System.out.println(eval.toSummaryString());
+//        System.out.println(eval.toClassDetailsString());
+//        System.out.println(eval.toMatrixString());
+        
+        // SVM Evaluation
+//        ArrayList<Double> list = new ArrayList<Double>(Arrays.asList(0.01,0.05,0.10,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.50));
+//        ArrayList<Double> list = new ArrayList<Double>(Arrays.asList(0.55,0.60,0.65,0.70,0.75,0.80,0.95,1.00));
+//        for (int i = 0; i < list.size(); i++){
+            System.out.println("\n==== SVM EVALUATION ====");
+            SMO svm = new SMO();
+            RBFKernel rbfKernel = new RBFKernel();
+            double gamma = 0.50;
+            rbfKernel.setGamma(gamma);
+
+            svm.setKernel(rbfKernel);
+            long starttime = System.currentTimeMillis(); 
+            svm.buildClassifier(instances);
+            long stoptime = System.currentTimeMillis();
+            long elapsedtime = stoptime - starttime;
+            System.out.println(" === ELAPSED TIME "+ elapsedtime/1000 +" seconds ===");
+            eval.crossValidateModel(svm, instances, 10, randeval);
+            System.out.println(eval.toSummaryString());
+            System.out.println(eval.toClassDetailsString());
+            System.out.println(eval.toMatrixString());
 //        }
-//        System.out.println(instances.instance(1).value(3));
-//        System.out.println(instances.get(1).stringValue(3);
-        ArrayList<String> attrValues = new ArrayList();
-        for (int i = 0; i < instances.numInstances(); i++){
-            Instance instance = instances.get(i);
-            String attrValue = instance.stringValue(0);
-            if (attrValues.isEmpty() || !attrValues.contains(attrValue)){
-                attrValues.add(attrValue);
-            }
-        }
     }
     
 }

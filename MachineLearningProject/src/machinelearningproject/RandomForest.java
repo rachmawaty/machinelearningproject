@@ -9,14 +9,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import weka.classifiers.AbstractClassifier;
-import weka.classifiers.Evaluation;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.converters.ConverterUtils;
 
 /**
  *
@@ -25,16 +20,18 @@ import weka.core.converters.ConverterUtils;
 public class RandomForest extends AbstractClassifier implements Serializable{
     
     public ArrayList<Tree> dtrees;
+    public int numTrees;
     
-    public RandomForest()
+    public RandomForest(int numTrees)
     {
-        dtrees = new ArrayList();
+        this.dtrees = new ArrayList();
+        this.numTrees = numTrees;
     }
     
     @Override
     public void buildClassifier(Instances i) throws Exception {
         RFTree rftree = new RFTree();
-        dtrees = rftree.buildRandomForest(i, 5);
+        dtrees = rftree.buildRandomForest(i, numTrees);
     }
     
     @Override
@@ -70,33 +67,5 @@ public class RandomForest extends AbstractClassifier implements Serializable{
         }
         
         return result;
-    }
-    
-    public static void main (String[] args)
-    { 
-        try {
-            RandomForest rf = new RandomForest();
-            ConverterUtils.DataSource source = new ConverterUtils.DataSource("D:\\spambase.arff");
-//            ConverterUtils.DataSource source = new ConverterUtils.DataSource("D:\\weather-nominal.arff");
-            Instances instances = source.getDataSet();
-            instances.setClassIndex(instances.numAttributes()-1);
-                        
-//            Random rand_ = new Random(5000);  
-//            instances.randomize(rand_);
-
-            //Evaluation
-            System.out.println("\n==== EVALUASI CLASSIFIER BUATAN ====");        
-            Evaluation eval = new Evaluation(instances);
-
-            System.out.println("\nCross-Validation 10 Folds Evaluation");
-            Random rand = new Random();        
-            eval.crossValidateModel(rf, instances, 10, rand); 
-            System.out.println(eval.toSummaryString());
-            System.out.println(eval.toMatrixString());
-            System.out.println(eval.toClassDetailsString());
-
-        } catch (Exception ex) {
-            Logger.getLogger(DecisionTree.class.getName()).log(Level.SEVERE, null, ex);         
-        } 
     }
 }

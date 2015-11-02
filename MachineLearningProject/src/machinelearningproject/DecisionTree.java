@@ -6,14 +6,9 @@
 package machinelearningproject;
 
 import java.io.Serializable;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import weka.classifiers.AbstractClassifier;
-import weka.classifiers.Evaluation;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.converters.ConverterUtils;
 /**
  *
  * @author Raches
@@ -42,36 +37,5 @@ public class DecisionTree extends AbstractClassifier implements Serializable{
             }
         }
         return result;
-    }
-    
-    public static void main (String[] args)
-    { 
-        try {
-            DecisionTree id3 = new DecisionTree();
-//            ConverterUtils.DataSource source = new ConverterUtils.DataSource("D:\\spambase.arff");
-            ConverterUtils.DataSource source = new ConverterUtils.DataSource("D:\\weather-nominal.arff");
-            Instances instances = source.getDataSet();
-            instances.setClassIndex(instances.numAttributes()-1);
-            
-            id3.mainTree = id3.mainTree.buildTree(instances);
-            id3.mainTree.printTree(id3.mainTree);
-            
-//            Random rand_ = new Random(5000);  
-//            instances.randomize(rand_);
-
-            //Evaluation
-            System.out.println("\n==== EVALUASI CLASSIFIER BUATAN ====");        
-            Evaluation eval = new Evaluation(instances);
-
-            System.out.println("\nCross-Validation 10 Folds Evaluation");
-            Random rand = new Random(1);        
-            eval.crossValidateModel(id3, instances, 10, rand); 
-            System.out.println(eval.toSummaryString());
-            System.out.println(eval.toMatrixString());
-            System.out.println(eval.toClassDetailsString());
-
-        } catch (Exception ex) {
-            Logger.getLogger(DecisionTree.class.getName()).log(Level.SEVERE, null, ex);         
-        } 
     }
 }
