@@ -34,11 +34,13 @@ public class MachineLearningProject {
 
 //        Random rand_ = new Random();  
 //        instances.randomize(rand_);
-        for (int i = 0; i < 5; i++){
+//        for (int i = 0; i < 5; i++){
         Collections.shuffle(instances);
         
         Random randeval = new Random(1);
-        Evaluation eval = new Evaluation(instances);
+        Evaluation evalid3 = new Evaluation(instances);
+        Evaluation evalrf = new Evaluation(instances);
+        Evaluation evalsvm = new Evaluation(instances);
         
         long starttime, stoptime, elapsedtime;
         // ID3 Evaluation
@@ -46,14 +48,13 @@ public class MachineLearningProject {
         DecisionTree dtree = new DecisionTree();
 //        id3.buildClassifier(instances);
         starttime = System.currentTimeMillis(); 
-        eval.crossValidateModel(dtree, instances, 10, randeval);
+        evalid3.crossValidateModel(dtree, instances, 10, randeval);
         stoptime = System.currentTimeMillis(); 
         elapsedtime = stoptime - starttime;
         System.out.println("\n=== ELAPSED TIME "+ elapsedtime/1000 +" seconds ===");
-        System.out.println("Error rate : "+eval.errorRate());
-        System.out.println(eval.toSummaryString());
-        System.out.println(eval.toClassDetailsString());
-        System.out.println(eval.toMatrixString());
+        System.out.println(evalid3.toSummaryString());
+        System.out.println(evalid3.toClassDetailsString());
+        System.out.println(evalid3.toMatrixString());
         
         // Random Forest Evaluation
 //        int i = 0;
@@ -67,14 +68,14 @@ public class MachineLearningProject {
             RandomForest rf = new RandomForest(100);
 //            rf.buildClassifier(instances); 
             starttime = System.currentTimeMillis();
-            eval.crossValidateModel(rf, instances, 10, randeval);
+            evalrf.crossValidateModel(rf, instances, 10, randeval);
             stoptime = System.currentTimeMillis();
             elapsedtime = stoptime - starttime;
+            
             System.out.println("\n=== ELAPSED TIME "+ elapsedtime/1000 +" seconds ===");
-            System.out.println("Error rate : "+eval.errorRate());
-            System.out.println(eval.toSummaryString());
-            System.out.println(eval.toClassDetailsString());
-            System.out.println(eval.toMatrixString());
+            System.out.println(evalrf.toSummaryString());
+            System.out.println(evalrf.toClassDetailsString());
+            System.out.println(evalrf.toMatrixString());
 //            i = i + 25;
 //        }
         
@@ -90,16 +91,15 @@ public class MachineLearningProject {
             svm.setKernel(rbfKernel);
 //            svm.buildClassifier(instances);
             starttime = System.currentTimeMillis();
-            eval.crossValidateModel(svm, instances, 10, randeval);
+            evalsvm.crossValidateModel(svm, instances, 10, randeval);
             stoptime = System.currentTimeMillis();
             elapsedtime = stoptime - starttime;
             System.out.println("\n=== ELAPSED TIME "+ elapsedtime/1000 +" seconds ===");
-            System.out.println("Error rate : "+eval.errorRate());
-            System.out.println(eval.toSummaryString());
-            System.out.println(eval.toClassDetailsString());
-            System.out.println(eval.toMatrixString());
+            System.out.println(evalsvm.toSummaryString());
+            System.out.println(evalsvm.toClassDetailsString());
+            System.out.println(evalsvm.toMatrixString());
 //        }
         }
-    }
+//    }
     
 }
