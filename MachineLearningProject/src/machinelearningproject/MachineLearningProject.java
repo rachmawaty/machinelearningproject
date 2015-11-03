@@ -37,42 +37,61 @@ public class MachineLearningProject {
         Random randeval = new Random(1);
         Evaluation eval = new Evaluation(instances);
         
+        long starttime, stoptime, elapsedtime;
         // ID3 Evaluation
-//        System.out.println("\n=== ID3 EVALUATION ===");  
-//        DecisionTree id3 = new DecisionTree();
-//        
-//        eval.crossValidateModel(id3, instances, 10, randeval); 
-//        System.out.println(eval.toSummaryString());
-//        System.out.println(eval.toClassDetailsString());
-//        System.out.println(eval.toMatrixString());
-//        
-//        // Random Forest Evaluation
-//        System.out.println("\n=== RANDOM FOREST EVALUATION ===");
-//        
-//        RandomForest rf = new RandomForest(5);
-//        
-//        eval.crossValidateModel(rf, instances, 10, randeval); 
-//        System.out.println(eval.toSummaryString());
-//        System.out.println(eval.toClassDetailsString());
-//        System.out.println(eval.toMatrixString());
+        System.out.println("\n=== ID3 EVALUATION ===");  
+        DecisionTree id3 = new DecisionTree();
+//        id3.buildClassifier(instances);
+        starttime = System.currentTimeMillis(); 
+        eval.crossValidateModel(id3, instances, 10, randeval);
+        stoptime = System.currentTimeMillis(); 
+        elapsedtime = stoptime - starttime;
+        System.out.println(" === ELAPSED TIME "+ elapsedtime/1000 +" seconds ===");
+        System.out.println(eval.errorRate());
+        System.out.println(eval.toSummaryString());
+        System.out.println(eval.toClassDetailsString());
+        System.out.println(eval.toMatrixString());
+        
+        // Random Forest Evaluation
+//        int i = 0;
+//        while (i <= 25) {
+//            int numtrees = 1;
+//            if (i != 0){
+//                numtrees = i;
+//            }
+            System.out.println("\n=== RANDOM FOREST EVALUATION ===");
+
+            RandomForest rf = new RandomForest(100);
+//            rf.buildClassifier(instances); 
+            starttime = System.currentTimeMillis();
+            eval.crossValidateModel(rf, instances, 10, randeval);
+            stoptime = System.currentTimeMillis();
+            elapsedtime = stoptime - starttime;
+            System.out.println(" === ELAPSED TIME "+ elapsedtime/1000 +" seconds ===");
+            System.out.println(eval.errorRate());
+            System.out.println(eval.toSummaryString());
+            System.out.println(eval.toClassDetailsString());
+            System.out.println(eval.toMatrixString());
+//            i = i + 25;
+//        }
         
         // SVM Evaluation
 //        ArrayList<Double> list = new ArrayList<Double>(Arrays.asList(0.01,0.05,0.10,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.50));
 //        ArrayList<Double> list = new ArrayList<Double>(Arrays.asList(0.55,0.60,0.65,0.70,0.75,0.80,0.95,1.00));
 //        for (int i = 0; i < list.size(); i++){
-            System.out.println("\n==== SVM EVALUATION ====");
+//            System.out.println("\n==== SVM EVALUATION ====");
             SMO svm = new SMO();
             RBFKernel rbfKernel = new RBFKernel();
-            double gamma = 0.50;
+            double gamma = 0.45;
             rbfKernel.setGamma(gamma);
-
             svm.setKernel(rbfKernel);
-            long starttime = System.currentTimeMillis(); 
-            svm.buildClassifier(instances);
-            long stoptime = System.currentTimeMillis();
-            long elapsedtime = stoptime - starttime;
-            System.out.println(" === ELAPSED TIME "+ elapsedtime/1000 +" seconds ===");
+//            svm.buildClassifier(instances);
+            starttime = System.currentTimeMillis();
             eval.crossValidateModel(svm, instances, 10, randeval);
+            stoptime = System.currentTimeMillis();
+            elapsedtime = stoptime - starttime;
+            System.out.println(" === ELAPSED TIME "+ elapsedtime/1000 +" seconds ===");
+            System.out.println(eval.errorRate());
             System.out.println(eval.toSummaryString());
             System.out.println(eval.toClassDetailsString());
             System.out.println(eval.toMatrixString());

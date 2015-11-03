@@ -128,11 +128,4 @@ public class RFTree extends Tree{
         }
         return dtrees;
     }
-    
-    public static void main(String[] args) throws Exception{
-        RFTree rf = new RFTree();
-        DataSource source = new DataSource("D:\\weather-nominal.arff");
-        Instances instances = source.getDataSet();
-        rf.bootstrap(instances);
-    }
 }
