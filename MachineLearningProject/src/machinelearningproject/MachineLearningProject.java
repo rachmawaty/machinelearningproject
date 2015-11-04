@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
+import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.SMO;
 import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.core.Instances;
+import weka.core.Utils;
 import weka.core.converters.ConverterUtils.DataSource;
 
 /**
@@ -31,75 +33,55 @@ public class MachineLearningProject {
         Instances instances = source.getDataSet();
         int numAttr = instances.numAttributes();
         instances.setClassIndex(instances.numAttributes()-1);
+        
+        int runs = 5;
+        int seed = 15;
+        for (int i = 0; i < runs; i++) {
+            //randomize data
+            seed = seed+1;                       // the seed for randomizing the data
+            Random rand = new Random(seed);       // create seeded number generator
+            Instances randData = new Instances(instances);   // create copy of original data
+            Collections.shuffle(randData);
 
-//        Random rand_ = new Random();  
-//        instances.randomize(rand_);
-//        for (int i = 0; i < 5; i++){
-        Collections.shuffle(instances);
-        
-        Random randeval = new Random(1);
-        Evaluation evalid3 = new Evaluation(instances);
-        Evaluation evalrf = new Evaluation(instances);
-        Evaluation evalsvm = new Evaluation(instances);
-        
-        long starttime, stoptime, elapsedtime;
-        // ID3 Evaluation
-        System.out.println("\n=== ID3 EVALUATION ===");  
-        DecisionTree dtree = new DecisionTree();
-//        id3.buildClassifier(instances);
-        starttime = System.currentTimeMillis(); 
-        evalid3.crossValidateModel(dtree, instances, 10, randeval);
-        stoptime = System.currentTimeMillis(); 
-        elapsedtime = stoptime - starttime;
-        System.out.println("\n=== ELAPSED TIME "+ elapsedtime/1000 +" seconds ===");
-        System.out.println(evalid3.toSummaryString());
-        System.out.println(evalid3.toClassDetailsString());
-        System.out.println(evalid3.toMatrixString());
-        
-        // Random Forest Evaluation
-//        int i = 0;
-//        while (i <= 25) {
-//            int numtrees = 1;
-//            if (i != 0){
-//                numtrees = i;
-//            }
-            System.out.println("\n=== RANDOM FOREST EVALUATION ===");
+            Evaluation evalDTree = new Evaluation(randData);
+            Evaluation evalRF = new Evaluation(randData);
+            Evaluation evalSVM = new Evaluation(randData);
 
-            RandomForest rf = new RandomForest(100);
-//            rf.buildClassifier(instances); 
-            starttime = System.currentTimeMillis();
-            evalrf.crossValidateModel(rf, instances, 10, randeval);
-            stoptime = System.currentTimeMillis();
-            elapsedtime = stoptime - starttime;
+            int folds = 10;
+            for (int n = 0; n < folds; n++) {
+                Instances train = randData.trainCV(folds, n, rand);
+                Instances test = randData.testCV(folds, n);
+                //instantiate classifiers
+                DecisionTree dtree = new DecisionTree();
+                RandomForest rf = new RandomForest(100);
+                SMO svm = new SMO();
+                RBFKernel rbfKernel = new RBFKernel();
+                double gamma = 0.70;
+                rbfKernel.setGamma(gamma);
+                
+                dtree.buildClassifier(train);
+                rf.buildClassifier(train);
+                svm.buildClassifier(train);
+                
+                evalDTree.evaluateModel(dtree, test);
+                evalRF.evaluateModel(rf, test);
+                evalSVM.evaluateModel(svm, test);
+            }
+            System.out.println("=== Decision Tree Evaluation ===");
+            System.out.println(evalDTree.toSummaryString());
+            System.out.println(evalDTree.toClassDetailsString());
+            System.out.println(evalDTree.toMatrixString());
             
-            System.out.println("\n=== ELAPSED TIME "+ elapsedtime/1000 +" seconds ===");
-            System.out.println(evalrf.toSummaryString());
-            System.out.println(evalrf.toClassDetailsString());
-            System.out.println(evalrf.toMatrixString());
-//            i = i + 25;
-//        }
-        
-        // SVM Evaluation
-//        ArrayList<Double> list = new ArrayList<Double>(Arrays.asList(0.01,0.05,0.10,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.50));
-//        ArrayList<Double> list = new ArrayList<Double>(Arrays.asList(0.55,0.60,0.65,0.70,0.75,0.80,0.95,1.00));
-//        for (int i = 0; i < list.size(); i++){
-            System.out.println("\n==== SVM EVALUATION ====");
-            SMO svm = new SMO();
-            RBFKernel rbfKernel = new RBFKernel();
-            double gamma = 0.45;
-            rbfKernel.setGamma(gamma);
-            svm.setKernel(rbfKernel);
-//            svm.buildClassifier(instances);
-            starttime = System.currentTimeMillis();
-            evalsvm.crossValidateModel(svm, instances, 10, randeval);
-            stoptime = System.currentTimeMillis();
-            elapsedtime = stoptime - starttime;
-            System.out.println("\n=== ELAPSED TIME "+ elapsedtime/1000 +" seconds ===");
-            System.out.println(evalsvm.toSummaryString());
-            System.out.println(evalsvm.toClassDetailsString());
-            System.out.println(evalsvm.toMatrixString());
-//        }
+            System.out.println("=== Random Forest Evaluation ===");
+            System.out.println(evalRF.toSummaryString());
+            System.out.println(evalRF.toClassDetailsString());
+            System.out.println(evalRF.toMatrixString());
+            
+            System.out.println("=== SVM Evaluation ===");
+            System.out.println(evalSVM.toSummaryString());
+            System.out.println(evalSVM.toClassDetailsString());
+            System.out.println(evalSVM.toMatrixString());
         }
-//    }
+    }
     
 }
