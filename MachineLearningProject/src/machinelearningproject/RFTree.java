@@ -124,7 +124,7 @@ public class RFTree extends Tree{
         ArrayList<Tree> dtrees = new ArrayList();
         for (int i = 0; i < numTrees; i++){
             Instances randomInstances = bootstrap(instances);
-            dtrees.add(buildTree(instances));
+            dtrees.add(buildTree(randomInstances));
         }
         return dtrees;
     }
